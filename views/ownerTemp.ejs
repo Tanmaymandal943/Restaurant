@@ -1,0 +1,49 @@
+<div id="accordion">
+	<h2>Expenses</h2>
+	<br />
+	<div class="card overflow-hide">
+		<div class="card-header">
+			<a class="card-link" data-toggle="collapse" href="#collapseDoneIng">
+				Ingredients Requests
+			</a>
+		</div>
+		<div id="collapseDoneIng" class="collapse" data-parent="#accordion">
+			<div class="card-body">
+				<ul class="list-group">
+					<% for(var i=0; i < doneIngReq.length; i++) { %>
+					<li class="list-group-item">
+						<b>ExpenseID:</b> <%= doneIngReq[i].expense_id%>
+						<br />
+						<b>Details:</b> <%= doneIngReq[i].details%>
+						<br />
+						<b>Price:</b> <%= doneIngReq[i].price_total%>
+					</li>
+					<% } %>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			<a class="card-link" data-toggle="collapse" href="#collapseDoneMisc">
+				Misc Requests
+			</a>
+		</div>
+		<div id="collapseDoneMisc" class="collapse" data-parent="#accordion">
+			<div class="card-body">
+				<ul class="list-group">
+					<% for(var i=0; i < doneMiscReq.length; i++) { %>
+					<li class="list-group-item">
+						<b>ExpenseID:</b> <%= doneMiscReq[i].expense_id%>
+						<br />
+						<b>Details:</b> <%= doneMiscReq[i].details%>
+						<br />
+						<b>Price:</b> <%= doneMiscReq[i].price_total%>
+					</li>
+					<% } %>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

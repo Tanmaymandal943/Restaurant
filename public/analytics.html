@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sunny Restaurant Point of Service</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="Mycss.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Sunny Restaurant </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="#">Waiter</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Kitchen</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="#">Counter</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="#">Username</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Admin</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidenav">
+        <a href="Owner_Base.html">Sales</a>
+        <a href="Kitchen.html">Employee Details</a>
+        <a href="#">Restaurant Expenses</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="Owner_Base.html">Add User</a>
+        <a href="Owner_Base.html">Remove User</a>
+        <a href="approval.html">pending approvals</a>
+        <!-- <a href="#">Contact</a> -->
+    </div>
+
+    <!-- Page content -->
+    <div class="main">
+        
+
+        <br>
+        <div id="accordion">
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                            Restaurant sales
+                        </a>
+                    </div>
+                    <div id="collapseOne" class="collapse" data-parent="#accordion">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse2">
+                            Average employee rating
+                        </a>
+                    </div>
+                    <div id="collapse2" class="collapse" data-parent="#accordion">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse3">
+                            Top selling dishes
+                        </a>
+                    </div>
+                    <div id="collapse3" class="collapse" data-parent="#accordion">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse4">
+                            Customer demographic
+                        </a>
+                    </div>
+                    <div id="collapse4" class="collapse" data-parent="#accordion">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse5">
+                            Average salary
+                        </a>
+                    </div>
+                    <div id="collapse5" class="collapse" data-parent="#accordion">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse6">
+                            Average tip
+                        </a>
+                    </div>
+                    <div id="collapse6" class="collapse" data-parent="#accordion">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

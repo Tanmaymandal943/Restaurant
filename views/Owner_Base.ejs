@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sunny Restaurant Point of Service</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="Mycss.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js"></script>
+    
+    <script type='text/javascript'>    
+        $(document).ready(function(){
+            $('.delete').on('click', function(){
+                $(this).parent().parent().parent().parent().remove();
+            });
+        }); 
+
+        function loadres(id,status) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("expenses").innerHTML =
+                    this.responseText;
+
+                }
+            };
+            xhttp.open("GET", "/updateApproval?id=" + id + "&status=" + status, true);
+            xhttp.send();
+        }
+
+        window.onload = function() {
+            var canvas = document.getElementById("myCanvas1");
+            var ctx = canvas.getContext("2d");
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: <%- JSON.stringify(labels1); %>,
+                    datasets: [{
+                        label: 'Restaurant Sales',
+                        data: <%- JSON.stringify(data1); %>,
+                        backgroundColor: "rgb(100, 100, 100)"
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: <%- JSON.stringify(max1); %>,
+                                stepSize: <%- JSON.stringify(Math.ceil(max1/20)); %>
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var canvas = document.getElementById("myCanvas2");
+            var ctx = canvas.getContext("2d");
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: <%- JSON.stringify(labels2); %>,
+                    datasets: [{
+                        label: 'Restaurant Tips',
+                        data: <%- JSON.stringify(data2); %>,
+                        backgroundColor: "rgb(100, 100, 100)"
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: <%- JSON.stringify(max2); %>,
+                                stepSize: <%- JSON.stringify(Math.ceil(max2/20)); %>
+                            }
+                        }]
+                    }
+                }
+            });
+
+
+        }
+
+    </script>
+    
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-sm bg-dark fixed-top navbar-dark">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="/dashboard">Sunny Restaurant </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="/profile">Admin: <%= name %></a>
+            </li>
+        </ul>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <form method="POST" action="logout">
+                    <button type="submit" >Log Out</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidenav">
+        <a href="#add_update">Add/Update Employee</a>
+        <a href="#delete_user">Remove Employee</a>
+        <a href="#employees">Employee Details</a>
+        <a href="#expenses">Restaurant Expenses</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#approvals">Approvals</a>
+    </div>
+
+
+    <!-- Add/Update Users -->
+    <br>
+    <div class="main" id="add_update">
+        <div id = "add">
+            <h2>Add/Update Employee</h2>
+            <br>
+            <form method="POST" action="dashboard/update-user">
+                <div class="form-group">
+                  <input name="name" type="text" class="form-control" placeholder="Enter name" >
+                </div>
+                <div class="form-group">
+                    <input name="age" type="text" class="form-control" placeholder="Enter Age" >
+                  </div>
+                <div class="form-group">
+                    <input name="emp_id" type="text" class="form-control" placeholder="Enter EmployeeID" >
+                </div>
+                <div class="form-group">
+                    <input name="login_user" type="text" class="form-control" placeholder="Enter Employee Username" >
+                </div>
+                <div class="form-group">
+                    <input name="login_pswd" type="text" class="form-control" placeholder="Enter Employee password" >
+                </div>
+                <div class="form-group">
+                    <input name="address" type="text" class="form-control" placeholder="Enter Address">
+                </div>
+                <div class="form-group">
+                    <input name="salary" type="text" class="form-control" placeholder="Enter salary" >
+                  </div>
+                <div class="form-group">
+                    <input name="email" type="email" class="form-control" placeholder="Enter email" >
+                </div>
+                <div class="form-group">                
+                <input name="phone" type="text" class="form-control" placeholder="Enter phone">
+                </div>
+                <div class="form-group">
+                    <input name="designation" type="text" class="form-control" placeholder="Enter designation" >
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Add/Update</button>
+            </form> 
+        </div>
+    </div>
+
+
+
+    <!-- Delete User -->
+    <br><br><br><br><br><br>
+    <div class="main" id="delete_user">
+        <div id = "remove">
+            <h2>Removing Employee</h2>
+            <br>
+            <form method="POST" action="dashboard/delete-user">
+                <div class="form-group">
+                  <input name="emp_id" type="text" class="form-control" placeholder="Enter userid" >
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form> 
+        </div>
+    </div>
+
+
+    <!-- Employee Details -->
+    <br><br><br><br><br><br>
+    <div class="main" id="employees">
+        <div id="accordion">
+            <h2>Employee Details</h2>
+            <br>
+            <ul class="list-groupDetails">
+                <% for(var i=0; i < employees.length; i++) { %>    
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="card-link" data-toggle="collapse" href="#collapseEmp<%= i %>">
+                                <%= employees[i].name%>
+                            </a>
+                        </div>
+                        <div id="collapseEmp<%= i %>" class="collapse" data-parent="#accordion">
+                            <div class="card-body"> 
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <b>EmployeeID:</b> <%= employees[i].emp_id%>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b>Age:</b> <%= employees[i].age%>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b>Address:</b> <%= employees[i].address%>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+    
+
+    <!-- Expenses -->
+    <br><br><br><br><br><br>
+    <div class="main" id="expenses">
+        <div id="accordion">
+            <h2>Expenses</h2>
+            <br>
+            <div class="card overflow-hide">
+                <div class="card-header">
+                    <a class="card-link" data-toggle="collapse" href="#collapseDoneIng">
+                        Ingredients Requests
+                    </a>
+                </div>
+                <div id="collapseDoneIng" class="collapse" data-parent="#accordion">
+                    <div class="card-body"> 
+                        <ul class="list-group">
+                            <% for(var i=0; i < doneIngReq.length; i++) { %>    
+                            <li class="list-group-item">
+                                <b>ExpenseID:</b> <%= doneIngReq[i].expense_id%>
+                                <br>
+                                <b>Details:</b> <%= doneIngReq[i].details%>
+                                <br>
+                                <b>Price:</b> <%= doneIngReq[i].price_total%>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <a class="card-link" data-toggle="collapse" href="#collapseDoneMisc">
+                        Misc Requests
+                    </a>
+                </div>
+                <div id="collapseDoneMisc" class="collapse" data-parent="#accordion">
+                    <div class="card-body"> 
+                        <ul class="list-group">
+                            <% for(var i=0; i < doneMiscReq.length; i++) { %>    
+                            <li class="list-group-item">
+                                <b>ExpenseID:</b> <%= doneMiscReq[i].expense_id%>
+                                <br>
+                                <b>Details:</b> <%= doneMiscReq[i].details%>
+                                <br>
+                                <b>Price:</b> <%= doneMiscReq[i].price_total%>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Analytics -->
+    <br><br><br><br><br>
+    <div class="main" id="analytics">
+        <div id="accordion3">
+            <h2>Analytics</h2>
+            <br>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                            Restaurant sales
+                        </a>
+                    </div>
+                    <div id="collapseOne" class="collapse" data-parent="#accordion3">
+                        <div class="card-body"> 
+                            <canvas id="myCanvas1" width="400" height="400">Your browser does not support the canvas feature.</canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse2">
+                            Employee rating and salary
+                        </a>
+                    </div>
+                    <div id="collapse2" class="collapse" data-parent="#accordion3">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse3">
+                            Top selling dishes
+                        </a>
+                    </div>
+                    <div id="collapse3" class="collapse" data-parent="#accordion3">
+                        <div class="card-body"> 
+                                <img src="graph.png" alt="Analytics" width="500" height="600"> 
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse6">
+                            Average tip
+                        </a>
+                    </div>
+                    <div id="collapse6" class="collapse" data-parent="#accordion3">
+                        <div class="card-body"> 
+                            <canvas id="myCanvas2" width="400" height="400">Your browser does not support the canvas feature.</canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Approvals -->
+    <br><br><br><br><br><br>
+    <div class="main" id="approvals">
+        <div id="accordion4">
+            <h2>Approvals</h2>
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    <a class="card-link" data-toggle="collapse" href="#collapsePendIng">
+                        Ingredients Approvals
+                    </a>
+                </div>
+                <div id="collapsePendIng" class="collapse" data-parent="#accordion4">
+                    <div class="card-body"> 
+                        <ul class="list-group">
+                            <% for(var i=0; i < pendIngReq.length; i++) { %>    
+                            <li class="list-group-item">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <b>ExpenseID:</b> <%= pendIngReq[i].expense_id%>
+                                            <br>
+                                            <b>Details:</b> <%= pendIngReq[i].details%>
+                                            <br>
+                                            <b>Price:</b> <%= pendIngReq[i].price_total%>
+                                        </div>
+                                        <div class="col-4">
+                                            <button type="button" class="btn btn-success delete" onclick="loadres(<%= pendIngReq[i].expense_id %>,'Update')">Approve</button>
+                                            <button type="button" class="btn btn-danger delete" onclick="loadres(<%= pendIngReq[i].expense_id %>,'Delete')">Disapprove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card overflow-auto">
+                <div class="card-header">
+                    <a class="card-link" data-toggle="collapse" href="#collapsePendMisc">
+                        Misc Approvals
+                    </a>
+                </div>
+                <div id="collapsePendMisc" class="collapse" data-parent="#accordion4">
+                    <div class="card-body"> 
+                        <ul class="list-group">
+                            <% for(var i=0; i < pendMiscReq.length; i++) { %>    
+                            <li class="list-group-item">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <b>ExpenseID:</b> <%= pendMiscReq[i].expense_id %>
+                                            <br>
+                                            <b>Details:</b> <%= pendMiscReq[i].details %>
+                                            <br>
+                                            <b>Price:</b> <%= pendMiscReq[i].price_total%>
+                                        </div>
+                                        <div class="col-4">
+                                            <button type="button" class="btn btn-success delete" onclick="loadres(<%= pendMiscReq[i].expense_id %>,'Update')">Approve</button>
+                                            <button type="button" class="btn btn-danger delete" onclick="loadres(<%= pendMiscReq[i].expense_id %>,'Delete')">Disapprove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+</html>

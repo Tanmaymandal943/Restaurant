@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Reservation Manager</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="Mycss.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<script>
+  function selectThis(i) {
+    document.getElementById("nav" + i).style = "color: #f1f1f1;";
+    for (var c = 0; c < 5; c++) {
+      if (c != i) {
+        document.getElementById("nav" + c).style = "color: #818181;";
+      }
+    }
+  }
+
+  $(document).ready(function () {
+    // Check Radio-box
+    $(".rating input:radio").attr("checked", false);
+
+    $('.rating input').click(function () {
+      $(".rating span").removeClass('checked');
+      $(this).parent().addClass('checked');
+    });
+
+    $('input:radio').change(
+      function () {
+        var userRating = this.value;
+        // alert(userRating);
+      });
+  });
+  function selectcheck(i) {
+    var check = document.getElementById("check" + i).checked;
+    // console.log(document.getElementById("check"+i).disabled);
+    if (!document.getElementById("check" + i).disabled) {
+      document.getElementById("check" + i).checked = !check;
+    }
+  }
+
+  function res_selectcheck(i) {
+    var check = document.getElementById("res_check" + i).checked;
+    // console.log(document.getElementById("check"+i).disabled);
+    if (!document.getElementById("res_check" + i).disabled) {
+      document.getElementById("res_check" + i).checked = !check;
+    }
+  }
+
+  function changedate(str) {
+    var ele = document.getElementById("res_date").value;
+    var div0 = document.getElementById("date_div");
+    div0.innerHTML = ele;
+  }
+
+  function show_status() {
+    var num = document.getElementById("waiter_status").innerText;
+    var split_num = num.split(" ");
+    var refined = [];
+    for (var i = 0; i < split_num.length; i++) {
+      if (split_num[i].trim() != "") {
+        refined.push(split_num[i]);
+      }
+    }
+    var inp = document.getElementById("num_waiter").value;
+    var check = 0;
+    for (var i = 0; i < refined.length; i++) {
+      if (Number(refined[i]) == Number(inp)) {
+        check = 1;
+      }
+    }
+    if (check == 0) {
+      document.getElementById("output").innerHTML = "Not a waiter";
+    }
+    else {
+      document.getElementById("output").innerHTML = "Valid waiter";
+    }
+  }
+
+  function loadres() {
+    var xhttp = new XMLHttpRequest();
+    var date = document.getElementById("res_date").value;
+    var slot = document.getElementById("res_slot").value;
+
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("res_table").innerHTML =
+          this.responseText;
+        var total = document.getElementById("total_num").innerHTML;
+        var sum = 0;
+        for (var i = 0; i < total; i++) {
+          if (!document.getElementById("res_check" + i).disabled) { sum++; }
+        }
+        document.getElementById("res_free").innerHTML = sum;
+      }
+    };
+
+    xhttp.open("GET", "/dateres?date=" + date + "&slot=" + slot, true);
+    xhttp.send();
+
+  }
+
+  function loadresnotif() {
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          // console.log(this.responseText);
+          // console.log(num_not_prepared);
+          var str=this.responseText+"";
+          str=str.trim().replace(/(\r\n|\n|\r)/gm, "");
+          var lst=this.responseText.split(",");
+          var final_lst=[];
+          for(var i=0; i<lst.length; i++){
+            lst[i]=lst[i].trim();
+            if(lst[i]!=""){
+              final_lst.push(lst[i]);
+            }
+          }
+          for(var i=0; i<Number(document.getElementById("tables_length0").innerHTML); i++){
+            if(document.getElementById("avl"+i).innerHTML!=final_lst[i]){
+              document.getElementById("notif_placeholder").style.display = "";
+            }
+          }
+        }
+      };
+
+      xhttp.open("GET", "/getresnotif", true);
+      xhttp.send();
+
+  }
+
+  function validateform1() {
+    var x = Number(document.getElementById("tables_length0").innerHTML);
+    for(var i=0; i<x; i++){
+      if(document.getElementById("check"+i).checked){
+        return true;
+      }
+    }
+    alert("Please select a table!");
+    return false;
+  }
+</script>
+
+<body>
+  <!-- <div class="header">
+      <div class="logo">Sunny Restaurant</div>
+      <div class="header_div">
+        Reservation Manager Dashboard: Tanmay Mandal
+      </div>
+    </div> -->
+  <nav class="navbar navbar-expand-sm bg-dark fixed-top navbar-dark">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="/dashboard">Sunny Restaurant </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link " href="/profile">Reservation Manager: <%= emp_name %></a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item active">
+        <div id="notif_placeholder" style="display: none;"><img width="30" height="25" src="/alert.png"></div>
+      </li>
+      <li style="margin-left: 10px;" class="nav-item active">
+        <a href="/"><img width="30" height="30" src="/reload.png"></a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <form method="POST" action="logout">
+          <button type="submit">Log Out</button>
+        </form>
+      </li>
+    </ul>
+
+  </nav>
+
+  <div class="sidenav">
+    <a href="#main1" id="nav0" onclick="selectThis(0)">Table Assignment</a>
+    <a href="#main2" id="nav1" onclick="selectThis(1)">Reservation Management</a>
+    <a href="#main3" id="nav2" onclick="selectThis(2)">Waitlist Management</a>
+    <a href="#main4" id="nav3" onclick="selectThis(3)">Add Customer</a>
+    <a href="#main5" id="nav4" onclick="selectThis(4)">Menu (& Analytics)</a>
+    <!-- <a href="#">Contact</a> -->
+  </div>
+  <!-- Page content -->
+  <br> <br>
+  <section id="main1" class="main">
+    <h1>Tables</h1>
+    <div style="display: none" id="tables_length0"><%= tables.length %></div>
+    <form method="POST" action="dashboard/table_assigned#main1" onsubmit="return validateform1()" name="form1">
+      <div class="div-table">
+        <% for(var i=0; i < Math.floor(tables.length/6)+1; i++) { %>
+          <div class="div-table-row">
+            <% for(var j=0; j < Math.min(tables.length-6*i,6); j++) { %>
+              <div class="div-table-col">
+                <div style="display: none" id="avl<%= 6*i+j%>"><%= tables[6*i+j].avl %></div>
+
+                <% if(tables[6*i+j].avl){ %>
+                  <input value="<%= 6*i+j+1 %>" type="checkbox" id="check<%= 6*i+j %>" name="checkbox_arr" />
+                  <% } %>
+                    <% if(!tables[6*i+j].avl){ %>
+                      <input value="<%= 6*i+j+1 %>" type="checkbox" id="check<%= 6*i+j %>" disabled="disabled" name="checkbox_arr" />
+                      <input type="hidden" name="checkbox_arr" value="-1" />
+                      <% } %>
+                        <label>
+                          <%if(tables[6*i+j].avl){ %>
+                            <div class="myDIV"><img onclick="selectcheck(<%= 6*i+j %>)" class="table_img"
+                                src="./table_icon.jpg" width="80">
+                              <p>Table <%= 6*i+j+1 %>
+                              </p>
+                            </div>
+                            <% } %>
+                              <%if(!tables[6*i+j].avl){ %>
+                                <div class="myDIV"><img onclick="selectcheck(<%= 6*i+j %>)" class="table_img"
+                                    src="./taken_table.jpg" width="80">
+                                  <p>Table <%= 6*i+j+1 %>
+                                  </p>
+                                </div>
+                                <% } %>
+                                  <div class="hide">Capacity: <%= tables[6*i+j].capacity %><br>
+                                      <%if(tables[6*i+j].avl){%> un<% } %>occupied</div>
+                        </label>
+              </div>
+              <% } %>
+          </div>
+          <% } %>
+      </div>
+      <div>Number of free tables: <%= free_num %>
+      </div>
+      <label>Customer ID:</label>
+      <input name="cust_id" type="number" min="0" required> <br>
+      <label>Waiter ID:</label>
+      <input name="emp_id_waiter" id="num_waiter" type="number" onchange="show_status()" min="0" required>
+      <div style="display: none;" id="waiter_status">
+        <% for(var i=0; i<waiter_tables.length; i++){%>
+          <%= waiter_tables[i].emp_id %>
+            <% } %>
+      </div><br>
+      <div id="output"></div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <div>
+        <%if(!res_success){%> Tables selected are occupied already! <% } %>
+      </div>
+    </form>
+  </section>
+
+
+  <section id="main2" class="main">
+    <h1>Reservations for date: <div style="display:inline" id="date_div">2021-03-14</div>
+    </h1>
+    <!-- <div class="div-table">
+          <div class="div-table-row">
+            <div class="div-table-col">
+              <input type="checkbox" id="res1" />
+              <label for="myCheckbox1">
+                <div class="myDIV"><img class="table_img" src="./table_icon.jpg" width="80"><p>Table 1</p></div>
+                <div class="hide">Capacity: 4 <br> Unoccupied</div>
+              </label>
+            </div>
+          </div>
+        </div> -->
+    <form method="POST" action="dashboard/reservation_success#main2">
+      <div id="res_table"></div>
+      <div id="total_num" style="display: none;">
+        <%= total_num %>
+      </div>
+      <div>Number of free tables: <div id="res_free" style="display: inline;"> </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="date">Date:</label>
+            <input name="future_date" type="date" min="2021-03-23" id="res_date" onchange="changedate(this.value); loadres()" value="2021-03-23"
+              class="form-control" required>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="time">Slot Num:</label>
+            <input name="future_slot_num" type="number" onchange="loadres()" id="res_slot" min="0" value="0" max="11" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <label for="number">Customer ID:</label>
+            <input name="future_cust_id" type="number" class="form-control" min="0" required>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <div>
+        <% if(!future_success){%> Reservation not available! <% } %>
+      </div>
+    </form>
+  </section>
+
+
+  <section id="main3" class="main">
+    <h1>Waitlists</h1>
+    <form action="dashboard/waitlist_success#main3" method="POST">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="number">Customer ID:</label>
+            <input type="number" name="waitlist_cust_id" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="number">Customer Count:</label>
+            <input type="number" name="waitlist_cust_count" class="form-control">
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <%if(!waitlist_success){%> Customer ID wrong! <% } %> 
+    </form>
+  </section>
+
+  <section id="main4" class="main">
+    <h1>Add/Update Customer</h1>
+    <form method="POST" action="dashboard/modify_cust_success#main4">
+      <div class="form-group" id="add_cust_name">
+        <label>Name:</label>
+        <input type="text" class="form-control"  name="add_cust_name">
+      </div>
+      <div class="form-group" id="add_cust_age">
+        <label>Age:</label>
+        <input type="number" class="form-control" name="add_cust_age">
+      </div>
+      <div class="form-group" id="add_cust_email">
+        <label>Email: (separate by ';')</label>
+        <input type="text" class="form-control" placeholder="Enter email" name="add_cust_email">
+      </div>
+      <div class="form-group" id="add_cust_phone">
+        <label>Phone: (separate by ';')</label>
+        <input type="text" class="form-control" placeholder="Enter phone" name="add_cust_phone">
+      </div>
+      <div class="form-group">
+        <label>Are you an existing employee?</label>
+        <input type="checkbox" onclick="showform()" id="emp_checkbox" name="add_cust_emp" value="0">
+      </div>
+      <div class="form-group" style="display: none" id="emp_form" >
+        <label>Employee ID</label>
+        <input type="number" class="form-control" name="add_cust_emp_id">
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Add/Update</button>
+      <% if(!add_customer_success) { %> Customer couldn't be added <% } %> <br>
+      <% if(show_created_id) { %> YOUR CUSTOMER ID IS: <%= created_id %> <% } %>
+    </form>
+  </section>
+
+  <section id="main5" class="main">
+    <h1>Menu (select atleast one option in each)</h1>
+
+    <section id="menu" class="menu">
+      <div class="div-table">
+        <div class="div-table-row">
+          <div class="div-table-col">
+            Food Type:<br>
+            <select id="food" name="food_type" size="5" multiple>
+              <% for(var i=0; i<food_type.length; i++){ %>
+                <option>
+                  <%= food_type[i].food_type %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+          <div class="div-table-col">
+            Cuisine Type:<br>
+            <select id="cuisine" name="cuisine_type" size="5" multiple>
+              <% for(var i=0; i<cuisine_type.length; i++){ %>
+                <option>
+                  <%= cuisine_type[i].cuisine_type %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+
+          <<div class="div-table-col">
+            Rating (>=):<br>
+            <div style="display: none;" id="ratings">1</div>
+            <div class="rating">
+              <span><input type="radio" name="rating" id="str10" value="10" onclick="changevalue(10)"><label
+                  for="str10"></label></span>
+              <span><input type="radio" name="rating" id="str9" value="9" onclick="changevalue(9)"><label
+                  for="str9"></label></span>
+              <span><input type="radio" name="rating" id="str8" value="8" onclick="changevalue(8)"><label
+                  for="str8"></label></span>
+              <span><input type="radio" name="rating" id="str7" value="7" onclick="changevalue(7)"><label
+                  for="str7"></label></span>
+              <span><input type="radio" name="rating" id="str6" value="6" onclick="changevalue(6)"><label
+                  for="str6"></label></span>
+              <span><input type="radio" name="rating" id="str5" value="5" onclick="changevalue(5)"><label
+                  for="str5"></label></span>
+              <span><input type="radio" name="rating" id="str4" value="4" onclick="changevalue(4)"><label
+                  for="str4"></label></span>
+              <span><input type="radio" name="rating" id="str3" value="3" onclick="changevalue(3)"><label
+                  for="str3"></label></span>
+              <span><input type="radio" name="rating" id="str2" value="2" onclick="changevalue(2)"><label
+                  for="str2"></label></span>
+              <span><input type="radio" name="rating" id="str1" value="1" onclick="changevalue(1)"><label
+                  for="str1"></label></span>
+            </div>
+        </div>
+
+        <div class="div-table-col">
+          Veg/Non Veg:<br>
+          <select name="veg_check" id="veg_check" size="2" multiple>
+            <option value="t">Veg</option>
+            <option value="f">Non-Veg</option>
+          </select>
+        </div>
+
+        <div class="div-table-col">
+          Price (<=):<br>
+            <div> <input id="price" value="100000000" name="price" style="width: 80%" type="number"></div>
+        </div>
+
+        <div class="div-table-col">
+          <button type="submit" onclick="loadmenu()">Submit</button>
+        </div>
+      </div>
+      </div>
+      <div>
+        Currently showing: <br> Food Type: <div style="display: inline" id="show_food">
+          <%= show_food %>
+        </div> | Cuisine Type: <div style="display: inline" id="show_cuisine">
+          <%= show_cuisine %>
+        </div><br>Rating>=<div style="display: inline" id="show_rating">
+          <%= show_rating %>
+        </div> | Veg:<div style="display: inline" id="show_veg">
+          <%= show_veg%>
+        </div> | Price<=<div style="display: inline" id="show_price">
+          <%= show_price %>
+      </div>
+      <div id="menu_placeholder">
+
+      </div>
+    </section><!-- End Menu Section -->
+  </section>
+
+
+  <script>
+    function showform() {
+      var checkbox = document.getElementById("emp_checkbox");
+      var emp_div = document.getElementById("emp_form");
+      if(checkbox.checked == true){
+        emp_div.style.display = "block";
+        document.getElementById("add_cust_name").style.display = "none";
+        document.getElementById("add_cust_age").style.display = "none";
+        document.getElementById("add_cust_email").style.display = "none";
+        document.getElementById("add_cust_phone").style.display = "none";
+      }
+      else{
+        emp_div.style.display = "none";
+        document.getElementById("add_cust_name").style.display = "block";
+        document.getElementById("add_cust_age").style.display = "block";
+        document.getElementById("add_cust_email").style.display = "block";
+        document.getElementById("add_cust_phone").style.display = "block";
+      }
+    }
+
+    var intervalId = setInterval(loadresnotif, 2000);
+
+
+    function myFunction() {
+      // Declare variables
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput");
+      menu_len = document.getElementById("menu_length").innerHTML;
+      filter = input.value.toUpperCase();
+
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < Math.floor(menu_len / 6) + 1; i++) {
+        for (var j = 0; j < Math.min(menu_len - 6 * i, 6); j++) {
+          var val = document.getElementById("dcell" + (6 * i + j)).innerHTML;
+          var cell = document.getElementById("cell" + (6 * i + j));
+          // console.log(temp);
+          // console.log(cell);
+          if (val.toUpperCase().indexOf(filter) > -1) {
+            cell.style.display = "";
+          }
+          else {
+            cell.style.display = "none";
+          }
+        }
+      }
+    }
+
+    function getSelectValues(select) {
+      var result = [];
+      var options = select && select.options;
+      var opt;
+
+      for (var i = 0, iLen = options.length; i < iLen; i++) {
+        opt = options[i];
+
+        if (opt.selected) {
+          result.push(opt.value || opt.text);
+        }
+      }
+      return result;
+    }
+    function loadmenu() {
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("menu_placeholder").innerHTML =
+            this.responseText;
+          var fx;
+          // document.getElementsByName("plusbutton")
+          var itemlist = document.getElementsByName("plusbutton");
+          for (var xx = 0; xx < itemlist.length; xx++) {
+            itemlist[xx].style.visibility = "hidden";
+          }
+        }
+      };
+
+      var food = getSelectValues(document.getElementById("food")).join();
+      var cuisine = getSelectValues(document.getElementById("cuisine")).join();
+      var veg = getSelectValues(document.getElementById("veg_check")).join();
+      var ratings = document.getElementById("ratings").innerHTML;
+      var price = document.getElementById("price").value;
+      xhttp.open("GET", "getmenu?food=" + food + "&cuisine=" + cuisine + "&rating=" + ratings + "&veg=" + veg + "&price=" + price+"&kitchen=0", true);
+      xhttp.send();
+
+      document.getElementById("show_food").innerHTML = food;
+      document.getElementById("show_cuisine").innerHTML = cuisine;
+      document.getElementById("show_rating").innerHTML = ratings;
+      document.getElementById("show_price").innerHTML = price;
+      document.getElementById("show_veg").innerHTML = veg;
+    }
+
+    
+
+    function changevalue(num) {
+      document.getElementById("ratings").innerHTML = num;
+    }
+
+    var options = document.getElementById("food").getElementsByTagName("option");
+    var i;
+    for (i = 0; i < options.length; i++) {
+      options[i].selected = true;
+    }
+
+    options = document.getElementById("cuisine").getElementsByTagName("option");
+    for (i = 0; i < options.length; i++) {
+      options[i].selected = true;
+    }
+
+    options = document.getElementById("veg_check").getElementsByTagName("option");
+    for (i = 0; i < options.length; i++) {
+      options[i].selected = true;
+    }
+    loadmenu();
+
+    options = document.getElementById("food").getElementsByTagName("option");
+    for (i = 0; i < options.length; i++) {
+      options[i].selected = false;
+    }
+
+    options = document.getElementById("cuisine").getElementsByTagName("option");
+    for (i = 0; i < options.length; i++) {
+      options[i].selected = false;
+    }
+
+    options = document.getElementById("veg_check").getElementsByTagName("option");
+    for (i = 0; i < options.length; i++) {
+      options[i].selected = false;
+    }
+
+    document.getElementById("price").value = null;
+
+
+  </script>
+</body>
+
+</html>

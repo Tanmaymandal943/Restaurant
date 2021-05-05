@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Kitchen Manager</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="Mycss.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<script>
+  function selectThis(i) {
+    document.getElementById("nav" + i).style = "color: #f1f1f1;";
+    for (var c = 0; c < 5; c++) {
+      if (c != i) {
+        document.getElementById("nav" + c).style = "color: #818181;";
+      }
+    }
+  }
+
+  $(document).ready(function () {
+    // Check Radio-box
+    $(".rating input:radio").attr("checked", false);
+
+    $('.rating input').click(function () {
+      $(".rating span").removeClass('checked');
+      $(this).parent().addClass('checked');
+    });
+
+    $('input:radio').change(
+      function () {
+        var userRating = this.value;
+        // alert(userRating);
+      });
+  });
+  function selectcheck(i) {
+    var check = document.getElementById("check" + i).checked;
+    // console.log(document.getElementById("check"+i).disabled);
+    if (!document.getElementById("check" + i).disabled) {
+      document.getElementById("check" + i).checked = !check;
+    }
+  }
+
+  function res_selectcheck(i) {
+    var check = document.getElementById("res_check" + i).checked;
+    // console.log(document.getElementById("check"+i).disabled);
+    if (!document.getElementById("res_check" + i).disabled) {
+      document.getElementById("res_check" + i).checked = !check;
+    }
+  }
+
+  function changedate(str) {
+    var ele = document.getElementById("res_date").value;
+    var div0 = document.getElementById("date_div");
+    div0.innerHTML = ele;
+  }
+
+  function show_status() {
+    var num = document.getElementById("waiter_status").innerText;
+    var split_num = num.split(" ");
+    var refined = [];
+    for (var i = 0; i < split_num.length; i++) {
+      if (split_num[i].trim() != "") {
+        refined.push(split_num[i]);
+      }
+    }
+    var inp = document.getElementById("num_waiter").value;
+    var check = 0;
+    for (var i = 0; i < refined.length; i++) {
+      if (refined[i] == inp) {
+        check = 1;
+      }
+    }
+    if (check == 0) {
+      document.getElementById("output").innerHTML = "Not a waiter";
+    }
+    else {
+      document.getElementById("output").innerHTML = "Valid waiter";
+    }
+  }
+
+  function loadres() {
+    var xhttp = new XMLHttpRequest();
+    var date = document.getElementById("res_date").value;
+    var slot = document.getElementById("res_slot").value;
+
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("res_table").innerHTML =
+          this.responseText;
+        var total = document.getElementById("total_num").innerHTML;
+        var sum = 0;
+        for (var i = 0; i < total; i++) {
+          if (!document.getElementById("res_check" + i).disabled) { sum++; }
+        }
+        document.getElementById("res_free").innerHTML = sum;
+      }
+    };
+
+    xhttp.open("GET", "/dateres?date=" + date + "&slot=" + slot, true);
+    xhttp.send();
+
+  }
+
+  function loadnotif() {
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          // console.log(this.responseText);
+          // console.log(num_not_prepared);
+          if (Number(num_not_prepared) != Number(this.responseText)) {
+            document.getElementById("notif_placeholder").style.display = "";
+          }
+        }
+      };
+
+      xhttp.open("GET", "/getnotif?waiter_bool=false", true);
+      xhttp.send();
+
+  }
+
+  function changeavl(id) {
+    var xhttp = new XMLHttpRequest();
+    
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        console.log("changed!");
+      }
+    };
+
+    xhttp.open("GET", "/changeavl?food_id="+id, true);
+    xhttp.send();
+
+  }
+</script>
+
+<body>
+  <!-- <div class="header">
+      <div class="logo">Sunny Restaurant</div>
+      <div class="header_div">
+        Reservation Manager Dashboard: Tanmay Mandal
+      </div>
+    </div> -->
+  <nav class="navbar navbar-expand-sm bg-dark fixed-top navbar-dark">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="/dashboard">Sunny Restaurant </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link " href="/profile">Kitchen Manager: <%= emp_name %></a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item active">
+        <div id="notif_placeholder" style="display: none;"><img width="30" height="25" src="/alert.png"></div>
+      </li>
+      <li style="margin-left: 10px;" class="nav-item active">
+        <a href="/"><img width="30" height="30" src="/reload.png"></a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <form method="POST" action="logout">
+          <button type="submit">Log Out</button>
+        </form>
+      </li>
+    </ul>
+
+  </nav>
+
+  <div class="sidenav">
+    <a href="#main1" id="nav0" onclick="selectThis(0)">Live Orders</a>
+    <a href="#main2" id="nav1" onclick="selectThis(1)">Ingredient Request</a>
+    <a href="#main3" id="nav2" onclick="selectThis(2)">Food Item Request</a>
+    <a href="#main4" id="nav3" onclick="selectThis(3)">Analytics</a>
+    <a href="#main5" id="nav4" onclick="selectThis(4)">Menu (Availability)</a>
+    <!-- <a href="#">Contact</a> -->
+  </div>
+  <!-- Page content -->
+  <br> <br>
+  <section id="main1" class="main">
+    <h1>Live Orders</h1>
+    <div id="accordion">
+      <div style="display: none" id="num_not_prepared">
+        <%= tables.length%>
+      </div>
+      <% for(var i=0; i < tables.length ; i++) { %>
+        <div class="card">
+          <div class="card-header">
+            <a class="card-link" data-toggle="collapse"
+              href="#table_<%= tables[i].order_id %>">
+              <div class="container">
+                <div class="row">
+                    <div class="col-sm"> Order #<%= tables[i].order_id %>
+                    </div>
+                    <div class="col-sm" style="float: right; display: inline;">Table: <%= tables[i].table_ids %>
+                    </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div id="table_<%= tables[i].order_id %>" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+              <form action="dashboard/order_prepared" method="POST">
+                <input value="<%= tables[i].order_id %>" style="display: none;" name="order_id">
+                <input type="hidden" value="<%= tables[i].order_id %>" name="order_id_hidden">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="number">Table No.: <%= tables[i].table_ids %></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="number">Order status: <%= tables[i].order_status %></label>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                        <label for="orders">
+                          <h4>Items:</h4>
+                        </label><br>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <b>Item Name</b>
+                              </div>
+                            </div>
+
+                            <div class="col">
+                              <div class="form-group">
+                                <b>Quantity</b>
+                              </div>
+                            </div>
+
+                          </div>
+                          <%for(var k=0; k<part2[i].length; k++){%>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <%= part2[i][k].split(",")[0] %>
+                                </div>
+                              </div>
+
+                              <div class="col">
+                                <div class="form-group">
+                                  <%= part2[i][k].split(",")[1] %>
+                                </div>
+                              </div>
+
+                            </div>
+                            <% } %>
+                    </div>
+                  </div>
+                </div>
+                  <button type="submit" class="btn btn-primary">Order Prepared!</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+        <% } %>
+    </div>
+  </section>
+
+
+  <section id="main2" class="main">
+    <h1>Ingredient Request</h1>
+    <form action="/dashboard/request_ingredient" method="POST">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Ingredient's Name:</label>
+            <input type="text" class="form-control" placeholder="Ingredient Name" name="ingredient_name">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Details:</label>
+            <input type="text" class="form-control" placeholder="Details" name="details_name">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="number">Quantity:</label>
+            <input type="number" class="form-control" placeholder="Quantity" name="quantity_name">
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </section>
+
+  <section id="main3" class="main">
+    <h1>Food Item Request</h1>
+    <form action="/request_item">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Item Name:</label>
+            <input type="text" class="form-control" placeholder="Item Name" name="food_name">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="text">Details:</label>
+            <input type="text" class="form-control" placeholder="Details" name="food_details">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="text">Price:</label>
+            <input type="number" class="form-control" placeholder="Price" name="food_price">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="text">Cuisine-Type:</label>
+            <input type="text" class="form-control" placeholder="Cuisine" name="food_cuisine">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="text">Food-Type: (Starter etc.)</label>
+            <input type="text" class="form-control" placeholder="Starter..." name="food_type">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="text">Veg: (t or f)</label>
+            <input type="text" class="form-control" placeholder="t/f" name="food_veg">
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </section>
+
+  <section id="main4" class="main">
+  </section>
+  
+  <section id="main5" class="main">
+    <h1>Menu (select atleast one option in each)</h1>
+
+    <section id="menu" class="menu">
+      <div class="div-table">
+        <div class="div-table-row">
+          <div class="div-table-col">
+            Food Type:<br>
+            <select id="food" name="food_type" size="5" multiple>
+              <% for(var i=0; i<food_type.length; i++){ %>
+                <option>
+                  <%= food_type[i].food_type %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+          <div class="div-table-col">
+            Cuisine Type:<br>
+            <select id="cuisine" name="cuisine_type" size="5" multiple>
+              <% for(var i=0; i<cuisine_type.length; i++){ %>
+                <option>
+                  <%= cuisine_type[i].cuisine_type %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+
+          <<div class="div-table-col">
+            Rating (>=):<br>
+            <div style="display: none;" id="ratings">1</div>
+            <div class="rating">
+              <span><input type="radio" name="rating" id="str10" value="10" onclick="changevalue(10)"><label
+                  for="str10"></label></span>
+              <span><input type="radio" name="rating" id="str9" value="9" onclick="changevalue(9)"><label
+                  for="str9"></label></span>
+              <span><input type="radio" name="rating" id="str8" value="8" onclick="changevalue(8)"><label
+                  for="str8"></label></span>
+              <span><input type="radio" name="rating" id="str7" value="7" onclick="changevalue(7)"><label
+                  for="str7"></label></span>
+              <span><input type="radio" name="rating" id="str6" value="6" onclick="changevalue(6)"><label
+                  for="str6"></label></span>
+              <span><input type="radio" name="rating" id="str5" value="5" onclick="changevalue(5)"><label
+                  for="str5"></label></span>
+              <span><input type="radio" name="rating" id="str4" value="4" onclick="changevalue(4)"><label
+                  for="str4"></label></span>
+              <span><input type="radio" name="rating" id="str3" value="3" onclick="changevalue(3)"><label
+                  for="str3"></label></span>
+              <span><input type="radio" name="rating" id="str2" value="2" onclick="changevalue(2)"><label
+                  for="str2"></label></span>
+              <span><input type="radio" name="rating" id="str1" value="1" onclick="changevalue(1)"><label
+                  for="str1"></label></span>
+            </div>
+        </div>
+
+        <div class="div-table-col">
+          Veg/Non Veg:<br>
+          <select name="veg_check" id="veg_check" size="2" multiple>
+            <option value="t">Veg</option>
+            <option value="f">Non-Veg</option>
+          </select>
+        </div>
+
+        <div class="div-table-col">
+          Price (<=):<br>
+            <div> <input id="price" value="100000000" name="price" style="width: 80%" type="number"></div>
+        </div>
+
+        <div class="div-table-col">
+          <button type="submit" onclick="loadmenu()">Submit</button>
+        </div>
+      </div>
+      </div>
+      <div>
+        Currently showing: <br> Food Type: <div style="display: inline" id="show_food">
+          <%= show_food %>
+        </div> | Cuisine Type: <div style="display: inline" id="show_cuisine">
+          <%= show_cuisine %>
+        </div><br>Rating>=<div style="display: inline" id="show_rating">
+          <%= show_rating %>
+        </div> | Veg:<div style="display: inline" id="show_veg">
+          <%= show_veg%>
+        </div> | Price<=<div style="display: inline" id="show_price">
+          <%= show_price %>
+      </div>
+      <div id="menu_placeholder">
+
+      </div>
+    </section><!-- End Menu Section -->
+  </section>
+  
+</body>
+
+<script>
+
+var num_not_prepared = -1;
+num_not_prepared = document.getElementById("num_not_prepared").innerHTML;
+var intervalId = setInterval(loadnotif, 2000);
+
+  function myFunction() {
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    menu_len = document.getElementById("menu_length").innerHTML;
+    filter = input.value.toUpperCase();
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < Math.floor(menu_len / 6) + 1; i++) {
+      for (var j = 0; j < Math.min(menu_len - 6 * i, 6); j++) {
+        var val = document.getElementById("dcell" + (6 * i + j)).innerHTML;
+        var cell = document.getElementById("cell" + (6 * i + j));
+        // console.log(temp);
+        // console.log(cell);
+        if (val.toUpperCase().indexOf(filter) > -1) {
+          cell.style.display = "";
+        }
+        else {
+          cell.style.display = "none";
+        }
+      }
+    }
+  }
+
+  function getSelectValues(select) {
+    var result = [];
+    var options = select && select.options;
+    var opt;
+
+    for (var i = 0, iLen = options.length; i < iLen; i++) {
+      opt = options[i];
+
+      if (opt.selected) {
+        result.push(opt.value || opt.text);
+      }
+    }
+    return result;
+  }
+  function loadmenu() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("menu_placeholder").innerHTML =
+          this.responseText;
+        var fx;
+        // document.getElementsByName("plusbutton")
+        var itemlist = document.getElementsByName("plusbutton");
+        for (var xx = 0; xx < itemlist.length; xx++) {
+          itemlist[xx].style.visibility = "hidden";
+        }
+        var checkboxlist = document.getElementsByName("toggler");
+        for (var xx = 0; xx < checkboxlist.length; xx++) {
+          checkboxlist[xx].style.visibility = "visible";
+        }
+      }
+    };
+
+    var food = getSelectValues(document.getElementById("food")).join();
+    var cuisine = getSelectValues(document.getElementById("cuisine")).join();
+    var veg = getSelectValues(document.getElementById("veg_check")).join();
+    var ratings = document.getElementById("ratings").innerHTML;
+    var price = document.getElementById("price").value;
+    xhttp.open("GET", "getmenu?food=" + food + "&cuisine=" + cuisine + "&rating=" + ratings + "&veg=" + veg + "&price=" + price+"&kitchen=1", true);
+    xhttp.send();
+
+    document.getElementById("show_food").innerHTML = food;
+    document.getElementById("show_cuisine").innerHTML = cuisine;
+    document.getElementById("show_rating").innerHTML = ratings;
+    document.getElementById("show_price").innerHTML = price;
+    document.getElementById("show_veg").innerHTML = veg;
+  }
+  function changevalue(num) {
+    document.getElementById("ratings").innerHTML = num;
+  }
+
+  var options = document.getElementById("food").getElementsByTagName("option");
+  var i;
+  for (i = 0; i < options.length; i++) {
+    options[i].selected = true;
+  }
+
+  options = document.getElementById("cuisine").getElementsByTagName("option");
+  for (i = 0; i < options.length; i++) {
+    options[i].selected = true;
+  }
+
+  options = document.getElementById("veg_check").getElementsByTagName("option");
+  for (i = 0; i < options.length; i++) {
+    options[i].selected = true;
+  }
+  loadmenu();
+
+  options = document.getElementById("food").getElementsByTagName("option");
+  for (i = 0; i < options.length; i++) {
+    options[i].selected = false;
+  }
+
+  options = document.getElementById("cuisine").getElementsByTagName("option");
+  for (i = 0; i < options.length; i++) {
+    options[i].selected = false;
+  }
+
+  options = document.getElementById("veg_check").getElementsByTagName("option");
+  for (i = 0; i < options.length; i++) {
+    options[i].selected = false;
+  }
+
+  document.getElementById("price").value = null;
+
+
+</script>
+</html>

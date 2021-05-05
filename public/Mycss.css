@@ -1,0 +1,174 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Lato", sans-serif;
+  }
+
+.table_img{
+  border: 1px solid #555;
+}
+.table_img:hover {
+  border: 5px solid #555;
+}
+
+.div-table {
+  /* display: inline-table;          */
+  width: auto;  
+  height: 500px;
+  overflow-y: scroll;       
+  background-color: #eee;         
+  border: 1px solid #666666;         
+  border-spacing: 5px; /* cellspacing:poor IE support for  this */
+}
+.div-table-row {
+  display: table-row;
+  width: auto;
+  clear: both;
+}
+.div-table-col {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;         
+  width: 200px;         
+  background-color: #ccc;  
+}
+
+.hide {
+  display: none;
+}
+    
+.myDIV:hover + .hide {
+  display: block;
+  color: red;
+}
+
+  .sidenav {
+    height: 100%;
+    width: 190px;
+    position: fixed;
+    z-index: 1;
+    top: 10;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 60px;
+  }
+  
+  .sidenav a {
+    padding: 6px 6px 6px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  
+  .menu_type {
+    display: inline;
+  }
+  .main {
+    padding-top: 60px;
+    margin-left: 200px; /* Same as the width of the sidenav */
+    height: 100vh;
+  }
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+
+/* Style the header with a grey background and some padding */
+.header {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  display:inline;
+  /* padding: 20px 10px; */
+}
+
+/* Style the header links */
+.header_div {
+  /* float: left; */
+  color: black;
+  text-align: center;
+  /* padding: 12px; */
+  text-decoration: none;
+  font-size: 18px;
+  display:inline;
+
+  /* line-height: 25px; */
+  /* border-radius: 4px; */
+}
+
+/* Style the logo link (notice that we set the same value of line-height and font-size to prevent the header to increase when the font gets bigger */
+.header div.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+/* Change the background color on mouse-over */
+.header div:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Style the active/current link*/
+.header div.active {
+  background-color: dodgerblue;
+  color: white;
+}
+
+
+
+
+
+.rating {
+  float:left;
+  /* width:300px; */
+}
+.rating span { float:right; position:relative; }
+.rating span input {
+  position:absolute;
+  top:0px;
+  left:0px;
+  opacity:0;
+}
+.rating span label {
+  display:inline-block;
+  width:15px;
+  height:15px;
+  text-align:center;
+  color:rgb(110, 23, 192);
+  background:rgb(165, 43, 43);
+  font-size:30px;
+  margin-right:2px;
+  line-height:30px;
+  border-radius:50%;
+  -webkit-border-radius:50%;
+}
+.rating span:hover ~ span label,
+.rating span:hover label,
+.rating span.checked label,
+.rating span.checked ~ span label {
+  background:#F90;
+  color:#FFF;
+}
+
+
+/* pratik */
+.list-group {
+  max-height: 300px;
+  margin-bottom: 10px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.list-groupDetails {
+  max-height: 500px;
+  margin-bottom: 10px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}

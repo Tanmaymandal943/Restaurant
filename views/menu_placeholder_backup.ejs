@@ -1,0 +1,83 @@
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        menu_len = document.getElementById("menu_length").innerHTML;
+        filter = input.value.toUpperCase();
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < Math.floor(menu_len / 6) + 1; i++) {
+            for (var j = 0; j < Math.min(menu_len - 6 * i, 6); j++) {
+                var val = document.getElementById("dcell" + (6 * i + j)).innerHTML;
+                var cell = document.getElementById("cell" + (6 * i + j));
+                // console.log(temp);
+                // console.log(cell);
+                if (val.toUpperCase().indexOf(filter) > -1) {
+                    cell.style.display = "";
+                }
+                else {
+                    cell.style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+<div class="div-table">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for items..">
+    <div id="menu_length" style="display: none">
+        <%=menu.length%>
+    </div>
+    <% for(var i=0; i<Math.floor(menu.length/6)+1; i++){ %>
+        <div style="display: hidden" id="avl_check<%= menu[6*i+j].food_id>"><%= menu[6*i+j].availability%></div>
+        <div class="div-table-row">
+            <% for(var j=0; j<Math.min(menu.length-6*i,6); j++){ %>
+                <% if(menu[6*i+j].veg){ %>
+                    <div id="dcell<%=6*i+j%>" style="display: none">
+                        <%=menu[6*i+j].name%>
+                    </div>
+                    <div id="cell<%=6*i+j%>"
+                        style="color: white; background-color: green; border: 1px solid black; font-family: Times New Roman, sans-serif;"
+                        class="div-table-col">
+                        <%= menu[6*i+j].name %> ---- ₹<%= menu[6*i+j].price %><br>
+                                Rated: <%= menu[6*i+j].rating %> <br> Cuisine: <%= menu[6*i+j].cuisine_type %> <br> Veg:
+                                        <%= menu[6*i+j].veg %><br> Food_type: <%= menu[6*i+j].food_type %>
+                                                <div name="plusbutton">
+                                                    <button name="plusbutton"
+                                                        onclick="increment(<%= menu[6*i+j].food_id%>,'<%= menu[6*i+j].name%>')">+</button>/
+                                                    <button
+                                                        onclick="decrement(<%= menu[6*i+j].food_id%>,'<%= menu[6*i+j].name%>')"
+                                                        style="display: inline;">-</button>
+                                                </div>
+                                                <div name="toggler" style="visibility: hidden">
+                                                    <input type="checkbox" onclick="changeavl(<%= menu[6*i+j].food_id %>)" <% if(menu[6*i+j].availability) { %> checked<% } %> >
+                                                </div>
+                    </div>
+                <% } %>
+                        <% if(!menu[6*i+j].veg){ %>
+                            <div id="dcell<%=6*i+j%>" style="display: none">
+                                <%=menu[6*i+j].name%>
+                            </div>
+                            <div id="cell<%=6*i+j%>"
+                                style="color: yellow; background-color: red; border: 1px solid black; font-family: Times New Roman, sans-serif;"
+                                class="div-table-col">
+                                <%= menu[6*i+j].name %> ---- ₹<%= menu[6*i+j].price %><br>
+                                        Rated: <%= menu[6*i+j].rating %> <br> Cuisine: <%= menu[6*i+j].cuisine_type %>
+                                                <br> Veg: <%= menu[6*i+j].veg %><br> Food_type: <%=menu[6*i+j].food_type %>
+                                                        <div name="plusbutton">
+                                                            <button name="plusbutton"
+                                                                onclick="increment(<%= menu[6*i+j].food_id%>,'<%= menu[6*i+j].name%>')">+</button>/
+                                                            <button
+                                                                onclick="decrement(<%= menu[6*i+j].food_id%>,'<%= menu[6*i+j].name%>')"
+                                                                style="display: inline;">-</button>
+                                                        </div>
+                                                        <div name="toggler" style="visibility: hidden">
+                                                            <input type="checkbox" onclick="changeavl(<%= menu[6*i+j].food_id %>)" <% if(menu[6*i+j].availability){ %> checked <% } %> >
+                                                        </div>
+                            </div>
+                        <% } %>
+                <% } %>
+        </div>
+        <% } %>
+</div>
